@@ -155,22 +155,21 @@ int main(int argc, char ** argv) {
 	while(true) {
 		int ret;
 		int newfd = accept(fd, NULL, NULL);
-		char buf[1024];
+		char tmp[4];
 
-		while(recv(newfd, &buf, sizeof(buf), MSG_DONTWAIT) == -1 &&
+		while(recv(newfd, tmp, sizeof(tmp), MSG_DONTWAIT) == -1 &&
 				(errno == EAGAIN || errno == EWOULDBLOCK)) {}
 
 		std::string quote = g_quotes[rand() % g_quotes.size()];
-		snprintf(buf, sizeof(buf),
-				"HTTP/1.1 200 OK\r\n"
-				"Server: space-quotes/0.0.1\r\n"
-				"Content-Type: text/plain; charset=utf-8\r\n"
-				"Content-Length: %d\r\n"
-				"Connection: close\r\n\r\n%s",
-				quote.size(),
-				quote.c_str()
-			);
-		send(newfd, buf, sizeof(buf), 0);
+		std::stringstream buf;
+		buf << "HTTP/1.1 200 OK\r\n";
+		buf << "Server: space-quotes/0.0.1\r\n";
+		buf << "Content-Type: text/plain; charset=utf-8\r\n";
+		buf << "Content-Length: " << quote.size() << "\r\n";
+		buf << "Connection: close\r\n\r\n";
+		buf << quote;
+
+		send(newfd, buf.str().c_str(), buf.str().size() , 0);
 		close(newfd);
 	}
 
