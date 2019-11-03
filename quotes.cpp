@@ -100,7 +100,7 @@ int main(int argc, char ** argv) {
 	std::string errfn;
 
 	for(addrinfo * ai = ai_res; ai != NULL; ai = ai->ai_next) {
-		if(fd = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol) < 0) {
+		if((fd = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol)) < 0) {
 			errfn = "socket";
 			continue;
 		}
