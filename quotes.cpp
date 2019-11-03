@@ -86,12 +86,12 @@ int main(int argc, char ** argv) {
 		return 0;
 	}
 
-  addrinfo hints, * ai_res;
+	addrinfo hints, * ai_res;
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_flags = AI_PASSIVE;
-  int fd = getaddrinfo(NULL, argv[1], &hints, &ai_res);
+	int fd = getaddrinfo(NULL, argv[1], &hints, &ai_res);
 	if(fd < 0) {
 		std::cerr << gai_strerror(fd) << std::endl;
 		return -1;
