@@ -106,7 +106,10 @@ int main(int argc, char ** argv) {
 		}
 
 		int yes = 1;
-		setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
+		if(setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) != 0) {
+			errfn = "setsockopt";
+			continue;
+		}
 
 		if(bind(fd, ai->ai_addr, ai->ai_addrlen) != 0) {
 			errfn = "bind";
@@ -145,17 +148,21 @@ int main(int argc, char ** argv) {
 
 	freeaddrinfo(ai_res);
 
-	if(fd < 0) {
-		std::cerr << "Could not bind to port: " << errfn << strerror(errno)
+	if(errfn != "") {
+		std::cerr << "Could not bind to port: " << errfn << ": " << strerror(errno)
 			<< std::endl;
 		return -1;
 	}
 
 	srand(time(NULL));
 	while(true) {
-		int ret;
-		int newfd = accept(fd, NULL, NULL);
+		int ret, newfd;
 		char tmp[4];
+
+		if((newfd = accept(fd, NULL, NULL)) < 0) {
+			std::cerr << "Could not accept: " << strerror(errno) << std::endl;
+			return -1;
+		}
 
 		while(recv(newfd, tmp, sizeof(tmp), MSG_DONTWAIT) == -1 &&
 				(errno == EAGAIN || errno == EWOULDBLOCK)) {}
