@@ -16,6 +16,8 @@
 #include <sstream>
 
 std::vector<std::string> g_quotes = {
+	"What is your favourite color? Mine is square.",
+	"Let's go to space! ESS, PEE... ACE!",
 	"To infinity and beyond!",
 	"Space, the final frontier.",
 	"Live long and prosper.",
